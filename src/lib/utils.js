@@ -4,17 +4,17 @@ import dotenv from "dotenv";
 dotenv.config(); // Ensure .env file is loaded
 
 export const generateToken = (userId, res) => {
-    const secretKey = process.env.JWT_SECRET;
-    if (!secretKey) {
-        throw new Error("JWT_SECRET is not defined");
-    }
+  const secretKey = process.env.JWT_SECRET;
+  if (!secretKey) {
+    throw new Error("JWT_SECRET is not defined");
+  }
 
-    const token = jwt.sign({ id: userId }, secretKey, { expiresIn: "30d" });
+  const token = jwt.sign({ id: userId }, secretKey, { expiresIn: "30d" });
 
-    res.cookie("jwt", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV !== "development",
-        sameSite: "strict",
-        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-    });
+  res.cookie("jwt", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV !== "development",
+    sameSite: "strict",
+    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+  });
 };
