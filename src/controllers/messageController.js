@@ -27,10 +27,12 @@ export const getMessages = async (req, res) => {
     });
     res.status(200).json(messages);
   } catch (error) {
-    consoel.log("Error in messagecontroller", error.message);
+    console.log("Error in messagecontroller", error.message);
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+
 
 export const sendMessage = async (req, res) => {
   try {
@@ -38,23 +40,26 @@ export const sendMessage = async (req, res) => {
     const { id: recieverId } = req.params;
     const senderId = req.user._id;
 
-    let imageUrl;
-    if(!image){
-        const uploadResponse = await cloudinary.uploader.upload(image)
-        imageUrl =uploadResponse.secure_url
+    let imageUrl = null;
+
+    if (image) { // Fix: Check if image exists before uploading
+      const uploadResponse = await cloudinary.uploader.upload(image);
+      imageUrl = uploadResponse.secure_url;
     }
 
     const newMessage = new Message({
       senderId,
       recieverId,
       text,
-      image:imageUrl
+      image: imageUrl, // Assign uploaded image URL (or null if no image)
     });
+
     await newMessage.save();
-    //the realtime functinality here for using socket io;
+
+    // Realtime functionality for socket.io can be added here
     res.status(201).json(newMessage);
   } catch (error) {
-    console.log("Error in message controller", error.message);
+    console.log("Error in message controller:", error.message);
     res.status(500).json({ message: "Internal server error" });
   }
 };
